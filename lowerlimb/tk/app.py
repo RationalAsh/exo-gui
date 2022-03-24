@@ -9,7 +9,6 @@ class Application(tk.Tk):
         # configure the root window
         self.title('Lower Limb Exoskeleton')
         self.geometry('300x50')
-        self.mainframe = ttk.Frame(self, padding="3 3 12 12")
 
         # label
         self.label = ttk.Label(self, text='Hello, Tkinter!')
