@@ -4,7 +4,9 @@ from tkinter.ttk import Frame, Button, Style
 from tkinter.messagebox import showinfo
 from tkinter import RIGHT, BOTH, RAISED, font
 
-class Application(tk.Tk):
+APPMODE = ''
+
+class ModeSelector(tk.Tk):
     def __init__(self):
         super().__init__()
 
@@ -41,6 +43,8 @@ class Application(tk.Tk):
         """
         print('{}'.format(e))
 
+        global APPMODE
+
         # Decide what to do.
         if e.keysym == 'Down':
             self.listbox.select_clear(self.selected_set)
@@ -50,14 +54,85 @@ class Application(tk.Tk):
             self.listbox.select_clear(self.selected_set)
             self.selected_set = max(self.selected_set - 1, 0)
             self.listbox.select_set(self.selected_set)
-        elif e.keysym == 'Enter':
+        elif e.keysym == 'Return':
+            if self.selected_set == 0:
+                APPMODE = 'RECORD'
+            else:
+                APPMODE = 'TUNE'
+            self.destroy()
+
+class DataRecordConfigurator(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        # configure the root window
+        self.title('Exo Manager - RECORD')
+        self.geometry('320x240')
+
+        # Frame
+        self.frame = Frame(self, relief=RAISED, borderwidth=1)
+        self.frame.pack(fill=BOTH, expand=True)
+        self.bind('<KeyPress>', self.keydown)
+
+        # State variable
+        self.sel = 0
+
+        default_font = font.Font(size=12, family='Courier')
+
+        # Variables
+        patient_code = tk.StringVar(value=1)
+        session_num = tk.StringVar(value=1)
+        record_num = tk.StringVar(value=1)
+
+        # Labels
+        b1 = tk.Radiobutton(self.frame, text='Patient #', value='PC', font=default_font)
+        b1.grid(row=0, column=0)
+        b2 = tk.Radiobutton(self.frame, text='Session #', value='PS', font=default_font)
+        b2.grid(row=1, column=0)
+        b3 = tk.Radiobutton(self.frame, text='Record  #', value='PR', font=default_font)
+        b3.grid(row=2, column=0)
+
+        self.rbuttons = [b1, b2, b3]
+
+        b1.select()
+
+        # Entries
+        e1 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=patient_code)
+        e1.grid(row=0, column=2)
+        e2 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=session_num)
+        e2.grid(row=1, column=2)
+        e3 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=record_num)
+        e3.grid(row=2, column=2)
+
+        self.spinboxes = [e1, e2, e3]
+        self.spinboxvars = [patient_code, session_num, record_num]
+
+    def keydown(self, e):
+        """
+        Respond to a keypress event.
+        :param e:
+        :return:
+        """
+        print('{}'.format(e))
+
+        # Decide what to do.
+        if e.keysym == 'Up':
+            self.sel = max(0, self.sel - 1)
+        elif e.keysym == 'Down':
+            self.sel = min(2, self.sel + 1)
+        elif e.keysym == 'Right':
+            self.spinboxvars[self.sel] += 1
+        elif e.keysym == 'Left':
+            pass
+        elif e.keysym == 'Return':
             pass
 
-
-    def button_clicked(self):
-        showinfo(title='Information',
-                 message='Hello, Tkinter!')
+        self.rbuttons[self.sel].select()
 
 if __name__ == '__main__':
-    app = Application()
-    app.mainloop()
+    modeSelectApp = ModeSelector()
+    modeSelectApp.mainloop()
+
+    if APPMODE == 'RECORD':
+        recordApp = DataRecordConfigurator()
+        recordApp.mainloop()
