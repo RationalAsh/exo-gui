@@ -15,6 +15,7 @@ class Application(tk.Tk):
         # Frame
         self.frame = Frame(self, relief=RAISED, borderwidth=1)
         self.frame.pack(fill=BOTH, expand=True)
+        self.bind('<KeyPress>', self.keydown)
 
         default_font = font.Font(size=24, family='Courier')
 
@@ -27,9 +28,31 @@ class Application(tk.Tk):
         self.listbox = tk.Listbox(self.frame, listvariable=options, height=2, selectmode='single', font=default_font)
         self.listbox.activate(1)
         self.listbox.pack(padx=1, pady=1)
-        self.listbox.select_set(0)
+        self.selected_set = 0
+        self.listbox.select_set(self.selected_set)
 
         #self.attributes("-fullscreen", True)
+
+    def keydown(self, e):
+        """
+        Respond to a keypress event.
+        :param e:
+        :return:
+        """
+        print('{}'.format(e))
+
+        # Decide what to do.
+        if e.keysym == 'Down':
+            self.listbox.select_clear(self.selected_set)
+            self.selected_set = min(self.selected_set + 1, 1)
+            self.listbox.select_set(self.selected_set)
+        elif e.keysym == 'Up':
+            self.listbox.select_clear(self.selected_set)
+            self.selected_set = max(self.selected_set - 1, 0)
+            self.listbox.select_set(self.selected_set)
+        elif e.keysym == 'Enter':
+            pass
+
 
     def button_clicked(self):
         showinfo(title='Information',
