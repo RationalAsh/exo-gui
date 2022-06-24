@@ -80,9 +80,9 @@ class DataRecordConfigurator(tk.Tk):
         default_font = font.Font(size=12, family='Courier')
 
         # Variables
-        patient_code = tk.StringVar(value=1)
-        session_num = tk.StringVar(value=1)
-        record_num = tk.StringVar(value=1)
+        patient_code = tk.IntVar(value=1)
+        session_num = tk.IntVar(value=1)
+        record_num = tk.IntVar(value=1)
 
         # Labels
         b1 = tk.Radiobutton(self.frame, text='Patient #', value='PC', font=default_font)
@@ -121,9 +121,11 @@ class DataRecordConfigurator(tk.Tk):
         elif e.keysym == 'Down':
             self.sel = min(2, self.sel + 1)
         elif e.keysym == 'Right':
-            self.spinboxvars[self.sel] += 1
+            cval = self.spinboxvars[self.sel].get()
+            self.spinboxvars[self.sel].set(min(cval + 1, 4096))
         elif e.keysym == 'Left':
-            pass
+            cval = self.spinboxvars[self.sel].get()
+            self.spinboxvars[self.sel].set(max(cval - 1, 0))
         elif e.keysym == 'Return':
             pass
 
