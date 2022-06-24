@@ -3,8 +3,11 @@ from tkinter import ttk
 from tkinter.ttk import Frame, Button, Style
 from tkinter.messagebox import showinfo
 from tkinter import RIGHT, BOTH, RAISED, font
+import os
+from pathlib import Path
 
 APPMODE = ''
+SAVEFILE = ''
 
 class ModeSelector(tk.Tk):
     def __init__(self):
@@ -115,11 +118,15 @@ class DataRecordConfigurator(tk.Tk):
         """
         print('{}'.format(e))
 
+        global SAVEFILE
+
         # Decide what to do.
         if e.keysym == 'Up':
             self.sel = max(0, self.sel - 1)
+            self.rbuttons[self.sel].select()
         elif e.keysym == 'Down':
             self.sel = min(2, self.sel + 1)
+            self.rbuttons[self.sel].select()
         elif e.keysym == 'Right':
             cval = self.spinboxvars[self.sel].get()
             self.spinboxvars[self.sel].set(min(cval + 1, 4096))
@@ -127,9 +134,15 @@ class DataRecordConfigurator(tk.Tk):
             cval = self.spinboxvars[self.sel].get()
             self.spinboxvars[self.sel].set(max(cval - 1, 0))
         elif e.keysym == 'Return':
-            pass
+            SAVEFILE = '/home/pi/Documents/EXPDATA/p{}/s{}/rec{}.csv'.format(self.spinboxvars[0].get(),
+                                                                             self.spinboxvars[1].get(),
+                                                                             self.spinboxvars[2].get())
+            SAVEPATH = Path(SAVEFILE)
 
-        self.rbuttons[self.sel].select()
+            # Make the parent path if it does not exist.
+            #SAVEPATH.parent.mkdir()
+            # Close the window
+            self.destroy()
 
 if __name__ == '__main__':
     modeSelectApp = ModeSelector()
@@ -138,3 +151,5 @@ if __name__ == '__main__':
     if APPMODE == 'RECORD':
         recordApp = DataRecordConfigurator()
         recordApp.mainloop()
+
+        print(SAVEFILE)
