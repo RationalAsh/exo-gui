@@ -5,9 +5,34 @@ from tkinter.messagebox import showinfo
 from tkinter import RIGHT, BOTH, RAISED, font
 import os
 from pathlib import Path
+import serial
+from serial.tools.list_ports import comports
+
+RESOLUTION='480x480+0+0'
 
 APPMODE = ''
 SAVEFILE = ''
+
+def initialize_port():
+    """
+    Initialize the serial port.
+    :return:
+    """
+    plist = comports()
+    selected = []
+    print("Checking for serial ports....")
+    print("Found:")
+    for i, p in enumerate(plist):
+        print("{}. {}".format(i, p))
+        if 'usbserial' in p.device:
+            selected.append(p)
+    print(selected)
+    if len(selected) == 1:
+        print("Selecting {}".format(selected[0]))
+        return serial.Serial(selected[0].device, 500000)
+    else:
+        print("Could not find appropriate port.")
+        return None
 
 class ModeSelector(tk.Tk):
     def __init__(self):
@@ -15,7 +40,7 @@ class ModeSelector(tk.Tk):
 
         # configure the root window
         self.title('Exo Manager')
-        self.geometry('320x240')
+        self.geometry(RESOLUTION)
 
         # Frame
         self.frame = Frame(self, relief=RAISED, borderwidth=1)
@@ -70,7 +95,7 @@ class DataRecordConfigurator(tk.Tk):
 
         # configure the root window
         self.title('Exo Manager - RECORD')
-        self.geometry('320x240')
+        self.geometry(RESOLUTION)
 
         # Frame
         self.frame = Frame(self, relief=RAISED, borderwidth=1)
@@ -81,6 +106,7 @@ class DataRecordConfigurator(tk.Tk):
         self.sel = 0
 
         default_font = font.Font(size=12, family='Courier')
+        default_font_large = font.Font(size=18, family='Courier')
 
         # Variables
         patient_code = tk.IntVar(value=1)
@@ -88,12 +114,26 @@ class DataRecordConfigurator(tk.Tk):
         record_num = tk.IntVar(value=1)
 
         # Labels
-        b1 = tk.Radiobutton(self.frame, text='Patient #', value='PC', font=default_font)
-        b1.grid(row=0, column=0)
-        b2 = tk.Radiobutton(self.frame, text='Session #', value='PS', font=default_font)
-        b2.grid(row=1, column=0)
-        b3 = tk.Radiobutton(self.frame, text='Record  #', value='PR', font=default_font)
-        b3.grid(row=2, column=0)
+        heading_label_var = tk.StringVar()
+        heading_label_var.set("Specify recording details.")
+        heading_label = tk.Label(self.frame, textvariable=heading_label_var, relief=RAISED,
+                                 font=default_font_large, pady=5, padx=5)
+        heading_label.grid(row=0, columnspan=3)
+
+        self.savefile_label_var = tk.StringVar()
+        savefile_label = tk.Label(self.frame, textvariable=self.savefile_label_var, font=default_font,
+                                  wraplength=320)
+        savefile_label.grid(row=4, columnspan=3)
+
+        b1 = tk.Radiobutton(self.frame, text='Patient #', value='PC', font=default_font,
+                            pady=5, padx=5)
+        b1.grid(row=1, column=0)
+        b2 = tk.Radiobutton(self.frame, text='Session #', value='PS', font=default_font,
+                            pady=5, padx=5)
+        b2.grid(row=2, column=0)
+        b3 = tk.Radiobutton(self.frame, text='Record  #', value='PR', font=default_font,
+                            pady=5, padx=5)
+        b3.grid(row=3, column=0)
 
         self.rbuttons = [b1, b2, b3]
 
@@ -101,11 +141,11 @@ class DataRecordConfigurator(tk.Tk):
 
         # Entries
         e1 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=patient_code)
-        e1.grid(row=0, column=2)
+        e1.grid(row=1, column=2)
         e2 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=session_num)
-        e2.grid(row=1, column=2)
+        e2.grid(row=2, column=2)
         e3 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=record_num)
-        e3.grid(row=2, column=2)
+        e3.grid(row=3, column=2)
 
         self.spinboxes = [e1, e2, e3]
         self.spinboxvars = [patient_code, session_num, record_num]
@@ -143,6 +183,11 @@ class DataRecordConfigurator(tk.Tk):
             #SAVEPATH.parent.mkdir()
             # Close the window
             self.destroy()
+
+        SAVEFILE = '/home/pi/Documents/EXPDATA/p{}/s{}/rec{}.csv'.format(self.spinboxvars[0].get(),
+                                                                         self.spinboxvars[1].get(),
+                                                                         self.spinboxvars[2].get())
+        self.savefile_label_var.set("Saving to: " + SAVEFILE)
 
 if __name__ == '__main__':
     modeSelectApp = ModeSelector()
