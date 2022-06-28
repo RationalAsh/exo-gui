@@ -13,6 +13,8 @@ RESOLUTION='480x480+0+0'
 APPMODE = ''
 SAVEFILE = ''
 
+FULLSCREEN=False
+
 def initialize_port():
     """
     Initialize the serial port.
@@ -47,15 +49,21 @@ class ModeSelector(tk.Tk):
         self.frame.pack(fill=BOTH, expand=True)
         self.bind('<KeyPress>', self.keydown)
 
+        if FULLSCREEN:
+            self.attributes('-fullscreen', True)
+
         default_font = font.Font(size=24, family='Courier')
+        large_font = font.Font(size=36, family='Courier')
 
         # Label
-        msglabel = tk.Label(self.frame, text='Select an Option:')
+        msglabel = tk.Label(self.frame, text='Select an Option:', font=large_font)
+        msglabel.pack(padx=5, pady=5)
 
         # Listbox with options
-        options = tk.StringVar(value=('1. Record Experiment',
+        options = tk.StringVar(value=('1. Record Session',
                                       '2. Tune Parameters'))
-        self.listbox = tk.Listbox(self.frame, listvariable=options, height=2, selectmode='single', font=default_font)
+        self.listbox = tk.Listbox(self.frame, listvariable=options, height=2,
+                                  selectmode='single', font=large_font)
         self.listbox.activate(1)
         self.listbox.pack(padx=1, pady=1)
         self.selected_set = 0
@@ -105,8 +113,8 @@ class DataRecordConfigurator(tk.Tk):
         # State variable
         self.sel = 0
 
-        default_font = font.Font(size=12, family='Courier')
-        default_font_large = font.Font(size=18, family='Courier')
+        default_font = font.Font(size=24, family='Courier')
+        large_font = font.Font(size=36, family='Courier')
 
         # Variables
         patient_code = tk.IntVar(value=1)
@@ -115,9 +123,9 @@ class DataRecordConfigurator(tk.Tk):
 
         # Labels
         heading_label_var = tk.StringVar()
-        heading_label_var.set("Specify recording details.")
+        heading_label_var.set("Recording Details")
         heading_label = tk.Label(self.frame, textvariable=heading_label_var, relief=RAISED,
-                                 font=default_font_large, pady=5, padx=5)
+                                 font=large_font, pady=5, padx=5)
         heading_label.grid(row=0, columnspan=3)
 
         self.savefile_label_var = tk.StringVar()
@@ -140,11 +148,14 @@ class DataRecordConfigurator(tk.Tk):
         b1.select()
 
         # Entries
-        e1 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=patient_code)
+        e1 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=patient_code,
+                        width=15, font=default_font)
         e1.grid(row=1, column=2)
-        e2 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=session_num)
+        e2 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=session_num,
+                        width=15, font=default_font)
         e2.grid(row=2, column=2)
-        e3 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=record_num)
+        e3 = tk.Spinbox(self.frame, from_=1, to=4096, textvariable=record_num,
+                        width=15, font=default_font)
         e3.grid(row=3, column=2)
 
         self.spinboxes = [e1, e2, e3]
