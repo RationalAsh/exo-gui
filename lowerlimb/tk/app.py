@@ -52,8 +52,8 @@ class ModeSelector(tk.Tk):
         if FULLSCREEN:
             self.attributes('-fullscreen', True)
 
-        default_font = font.Font(size=24, family='Courier')
-        large_font = font.Font(size=36, family='Courier')
+        default_font = font.Font(size=20, family='Courier')
+        large_font = font.Font(size=28, family='Courier')
 
         # Label
         msglabel = tk.Label(self.frame, text='Select an Option:', font=large_font)
