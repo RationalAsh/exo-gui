@@ -113,8 +113,8 @@ class DataRecordConfigurator(tk.Tk):
         # State variable
         self.sel = 0
 
-        default_font = font.Font(size=24, family='Courier')
-        large_font = font.Font(size=36, family='Courier')
+        default_font = font.Font(size=20, family='Courier')
+        large_font = font.Font(size=28, family='Courier')
 
         # Variables
         patient_code = tk.IntVar(value=1)
