@@ -200,7 +200,24 @@ class DataRecordConfigurator(tk.Tk):
                                                                          self.spinboxvars[2].get())
         self.savefile_label_var.set("Saving to: " + SAVEFILE)
 
+class DataRecorderApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        # configure the root window
+        self.title('Exo Manager - RECORD')
+        self.geometry(RESOLUTION)
+
+        # Frame
+        self.frame = Frame(self, relief=RAISED, borderwidth=1)
+        self.frame.pack(fill=BOTH, expand=True)
+        self.bind('<KeyPress>', self.keydown)
+
+        # State variable
+        self.sel = 0
+
 if __name__ == '__main__':
+
     modeSelectApp = ModeSelector()
     modeSelectApp.mainloop()
 
@@ -209,3 +226,4 @@ if __name__ == '__main__':
         recordApp.mainloop()
 
         print(SAVEFILE)
+
