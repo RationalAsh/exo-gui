@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import serial
 from serial.tools.list_ports import comports
+import threading
 
 RESOLUTION='480x480+0+0'
 
