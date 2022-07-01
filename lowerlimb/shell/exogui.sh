@@ -2,17 +2,20 @@
 
 HEIGHT=0
 WIDTH=0
+BACKTITLE="EXO-GUI"
+SERIALPORT="/dev/ttyUSB0"
+SERIALBAUD="500000"
 
 SUBFILE="SUBJECTDETAILS.txt"
 
 # Ask user for what option is needed.
 exec 3>&1
 selection=$(dialog \
-  --backtitle "System Information"\
+  --backtitle "$BACKTITLE"\
   --title "Menu"\
   --clear\
   --cancel-label "Exit"\
-  --menu "Please select:" $HEIGHT $WIDTH 4\
+  --menu "Select an Option:" $HEIGHT $WIDTH 4\
   "1" "Record Experiment"\
   "2" "Tune Parameters"\
   2>&1 1>&3)
@@ -50,10 +53,13 @@ function dialog_menu()
     arr["$1"]="$(dialog --clear \
             --backtitle "$2" \
             --title "$3" \
-            --menu "$4" 10 12 4 \
+            --menu "$4" 0 0 4 \
             "${!5}" --output-fd 1)"
 }
 
 dialog_menu disk_selection "EXO-GUI" "Subject Selection" "This is a test for Menu entry" array[@]
 
 echo "${arr[@]}"
+
+# Start logging the data. Set exit character to 27 so that an escape can stop the logging.
+python3 -m serial.tools.miniterm "${SERIALPORT}" "${SERIALBAUD}" --exit-char 27
