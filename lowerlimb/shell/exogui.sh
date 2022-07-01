@@ -24,18 +24,24 @@ echo "Option ${selection} Selected"
 array=(
         '1'
     'Subject 1'
-        '1'
-    'Subject 1'
-        '1'
-    'Subject 1'
-        '1'
-    'Subject 1'
-        '1'
-    'Subject 1'
-        '1'
-    'Subject 1'
-        '1'
-    'Subject 1'
+        '2'
+    'Subject 2'
+        '3'
+    'Subject 3'
+        '4'
+    'Subject 4'
+        '5'
+    'Subject 5'
+        '6'
+    'Subject 6'
+        '7'
+    'Subject 7'
+        '8'
+    'Subject 8'
+        '9'
+    'Subject 9'
+        '10'
+    'Subject 10'
 )
 
 function dialog_menu()
@@ -44,9 +50,10 @@ function dialog_menu()
     arr["$1"]="$(dialog --clear \
             --backtitle "$2" \
             --title "$3" \
-            --menu "$4" 10 60 3 \
+            --menu "$4" 10 12 4 \
             "${!5}" --output-fd 1)"
-
 }
 
-dialog_menu disk_selection "Menu" "Menu Test" "This is a test for Menu entry" array[@]
+dialog_menu disk_selection "EXO-GUI" "Subject Selection" "This is a test for Menu entry" array[@]
+
+echo "${arr[@]}"
